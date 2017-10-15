@@ -8,12 +8,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -26,6 +30,7 @@ public class Main extends Application {
 
     private static final int NUM_ROWS = 6;
     private static final int NUM_COLS = 7;
+    private static final int TILE_SIZE = 80;
 
     private boolean playable = true;
     private boolean turnRed = true;
@@ -40,28 +45,78 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Connect Four");
         //primaryStage.setMaxHeight(600);
         //primaryStage.setMinHeight(600);
         //primaryStage.setMaxWidth(600);
         //primaryStage.setMinWidth(600);
-        //Scene scene = new Scene(root);
 
-        //primaryStage.setScene(scene);
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
     }
 
+    private Shape makeGrid() {
+        Shape shape = new Rectangle((NUM_COLS+1)*TILE_SIZE, (NUM_ROWS+1)*TILE_SIZE);
+
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                Circle circle = new Circle(TILE_SIZE/2);
+                circle.setCenterX(TILE_SIZE/2);
+                circle.setCenterY(TILE_SIZE/2);
+                circle.setTranslateX(col * (TILE_SIZE+5) + TILE_SIZE/4);
+                circle.setTranslateY(row * (TILE_SIZE+5) + TILE_SIZE/4);
+
+                shape = shape.subtract(shape, circle);
+            }
+        }
+
+        Light.Distant light = new Light.Distant();
+        light.setAzimuth(45.0);
+        light.setElevation(30.0);
+
+        Lighting lighting = new Lighting();
+        lighting.setLight(light);
+        lighting.setSurfaceScale(5.0);
+
+        shape.setFill(Color.BLUE);
+        shape.setEffect(lighting);
+
+        return shape;
+    }
+
+    private List<Rectangle> makeColumns() {
+        List<Rectangle> columns = new ArrayList<>();
+
+        for (int x = 0; x < NUM_COLS; x++) {
+            Rectangle rect = new Rectangle(TILE_SIZE, (NUM_ROWS+1)*TILE_SIZE);
+            rect.setTranslateX(x * (TILE_SIZE+5) + TILE_SIZE/4);
+            rect.setFill(Color.TRANSPARENT);
+
+            rect.setOnMouseEntered(event -> rect.setFill((Color.rgb(200,200,50,0.1))));
+            rect.setOnMouseExited(event -> rect.setFill(Color.TRANSPARENT));
+
+            columns.add(rect);
+        }
+
+        return columns;
+    }
+
+
     private Parent createContent() {
 
-        root.setPrefSize(750, 650);
+        //root.setPrefSize(750, 650);
+
+        Shape gridShape = makeGrid();
+        root.getChildren().add(gridShape);
+        root.getChildren().addAll(makeColumns());
+
+
 
         for (int i = 0; i < NUM_ROWS; i ++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 Tile tile = new Tile();
-                tile.setTranslateX(j * 100);
-                tile.setTranslateY(i * 100);
+                tile.setTranslateX(j * TILE_SIZE);
+                tile.setTranslateY(i * TILE_SIZE);
 
                 root.getChildren().add(tile);
 
