@@ -1,30 +1,25 @@
 package sample;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Main extends Application {
 
@@ -33,11 +28,13 @@ public class Main extends Application {
     private static final int TILE_SIZE = 80;
 
     private boolean playable = true;
-    private boolean turnRed = true;
-    private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];
-    private List<Combo> combos = new ArrayList<>();
+    private boolean redMove = true;
+    //private Tile[][] board = new Tile[NUM_ROWS][NUM_COLS];
+    private Disc[][] grid = new Disc[NUM_COLS][NUM_ROWS];
 
-    private Pane root = new Pane();
+    private Pane discRoot = new Pane();
+
+    //private List<Combo> combos = new ArrayList<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -46,11 +43,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         primaryStage.setTitle("Connect Four");
-        //primaryStage.setMaxHeight(600);
-        //primaryStage.setMinHeight(600);
-        //primaryStage.setMaxWidth(600);
-        //primaryStage.setMinWidth(600);
-
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
     }
@@ -92,8 +84,11 @@ public class Main extends Application {
             rect.setTranslateX(x * (TILE_SIZE+5) + TILE_SIZE/4);
             rect.setFill(Color.TRANSPARENT);
 
-            rect.setOnMouseEntered(event -> rect.setFill((Color.rgb(200,200,50,0.1))));
+            rect.setOnMouseEntered(event -> rect.setFill((Color.rgb(200,200,50,0.5))));
             rect.setOnMouseExited(event -> rect.setFill(Color.TRANSPARENT));
+
+            final int column = x;
+            rect.setOnMouseClicked(event -> placeDisc(new Disc(redMove),column));
 
             columns.add(rect);
         }
@@ -101,18 +96,134 @@ public class Main extends Application {
         return columns;
     }
 
+    private void placeDisc(Disc disc, int column) {
+        if(!playable) {
+            return;
+        }
+        
+        int row = NUM_ROWS - 1;
+
+        do {
+            if (!getDisc(column, row).isPresent()) {
+                break;
+            }
+            row--;
+        } while (row >= 0);
+
+        if (row < 0)
+            return;
+
+        grid[column][row] = disc;
+        discRoot.getChildren().add(disc);
+        disc.setTranslateX(column * (TILE_SIZE+5) + TILE_SIZE/4);
+
+        final int currentRow = row;
+
+        TranslateTransition animation = new TranslateTransition(Duration.seconds(0.25), disc);
+        animation.setToY(row * (TILE_SIZE+5) + TILE_SIZE/4);
+        animation.setOnFinished(event -> {
+
+            if (gameEnded(column, currentRow)) {
+                gameOver();
+                playable = false;
+            }
+            redMove = !redMove;
+
+        });
+        animation.play();
+    }
+
+    private boolean gameEnded(int column, int row) {
+        List<Point2D> vertical = new ArrayList<>();
+        for (int r = row-3; r <= row+3; r++) {
+            vertical.add(new Point2D(column, r));
+        }
+
+        List<Point2D> horizontal = new ArrayList<>();
+        for (int c = column-3; c <= column+3; c++) {
+            horizontal.add(new Point2D(c, row));
+        }
+
+        List<Point2D> diagonal1 = new ArrayList<>();
+        int r = row - 3;
+        for (int c = column-3; c <= column+3; c++) {
+            diagonal1.add(new Point2D(c, r));
+            r++;
+        }
+
+        List<Point2D> diagonal2 = new ArrayList<>();
+        r = row + 3;
+        for (int c = column-3; c <= column+3; c++) {
+            diagonal2.add(new Point2D(c, r));
+            r--;
+        }
+        /*
+        List<Point2D> horizontal = IntStream.rangeClosed(column-3, column+3)
+                .mapToObj(c -> new Point2D(c, row))
+                .collect(Collectors.toList());
+
+        Point2D topLeft = new Point2D(column-3, row-3);
+        List<Point2D> diagonal1 = IntStream.rangeClosed(0, 6)
+                .mapToObj((e -> topLeft.add(e, e)))
+                .collect(Collectors.toList());
+
+        Point2D botLeft = new Point2D(column-3, row+3);
+        List<Point2D> diagonal2 = IntStream.rangeClosed(0, 6)
+                .mapToObj((e -> botLeft.add(e, -e)))
+                .collect(Collectors.toList());*/
+
+        System.out.println("Vertical: " + checkRange(vertical));
+        System.out.println("Horizontal: " + checkRange(horizontal));
+        System.out.println("Top Left Diagonal: " + checkRange(diagonal1));
+        System.out.println("Bottom Left Diagonal: " + checkRange(diagonal2));
+        return checkRange(vertical) || checkRange(horizontal) || checkRange(diagonal1) || checkRange(diagonal2);
+    }
+
+    private boolean checkRange(List<Point2D> points) {
+        int chain = 0;
+
+        for (Point2D p : points) {
+            int column = (int) p.getX();
+            int row = (int) p.getY();
+
+            Disc disc = getDisc(column, row).orElse((new Disc(!redMove)));
+            if (disc.red == redMove) {
+                chain++;
+                System.out.println(chain);
+                if (chain == 4) {
+                    return true;
+                }
+            } else {
+                chain = 0;
+            }
+        }
+        return false;
+    }
+
+    private void gameOver() {
+        System.out.println("Winner: " + (redMove ? "Red" : "Yellow"));
+    }
+
+    private Optional<Disc> getDisc(int column, int row) {
+        if (column < 0 || column >= NUM_COLS || row < 0 || row >= NUM_ROWS) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(grid[column][row]);
+    }
+
 
     private Parent createContent() {
 
         //root.setPrefSize(750, 650);
+        Pane root = new Pane();
+        root.getChildren().add(discRoot);
 
         Shape gridShape = makeGrid();
         root.getChildren().add(gridShape);
         root.getChildren().addAll(makeColumns());
 
 
-
-        for (int i = 0; i < NUM_ROWS; i ++) {
+       /* for (int i = 0; i < NUM_ROWS; i ++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 Tile tile = new Tile();
                 tile.setTranslateX(j * TILE_SIZE);
@@ -150,12 +261,12 @@ public class Main extends Application {
             for (int row = NUM_ROWS-1; row >= 3; row--) {
                 combos.add(new Combo(board[row][col], board[row-1][col-1], board[row-2][col-2], board[row-3][col-3]));
             }
-        }
+        }*/
 
         return root;
     }
 
-    private class Tile extends StackPane {
+   /* private class Tile extends StackPane {
         private Text text = new Text();
         private int row;
         private int column;
@@ -175,18 +286,18 @@ public class Main extends Application {
                     return;
                 }
                 if (event.getButton() == MouseButton.PRIMARY) {
-                    if (!turnRed) {
+                    if (!redMove) {
                         return;
                     }
                     drawRed();
-                    turnRed = false;
+                    redMove = false;
                     checkState();
                 } else if (event.getButton() == MouseButton.SECONDARY) {
-                    if (turnRed) {
+                    if (redMove) {
                         return;
                     }
                     drawBlue();
-                    turnRed = true;
+                    redMove = true;
                     checkState();
                 }
             });
@@ -265,6 +376,18 @@ public class Main extends Application {
             return tiles[0].getValue().equals(tiles[1].getValue())
                     && tiles[0].getValue().equals(tiles[2].getValue())
                     && tiles[0].getValue().equals(tiles[3].getValue());
+        }
+    }*/
+
+    private static class Disc extends Circle {
+        private final boolean red;
+
+        public Disc(boolean red) {
+            super(TILE_SIZE/2, red ? Color.RED : Color.YELLOW);
+            this.red = red;
+
+            setCenterX(TILE_SIZE/2);
+            setCenterY(TILE_SIZE/2);
         }
     }
 }
