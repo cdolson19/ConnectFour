@@ -47,9 +47,6 @@ public class Main extends Application {
         //primaryStage.setMaxWidth(600);
         //primaryStage.setMinWidth(600);
         //Scene scene = new Scene(root);
-        //primaryStage.setScene(new Scene(root, 300, 275));
-        //root.prefHeight(600);
-        //root.prefWidth(600);
 
         //primaryStage.setScene(scene);
         primaryStage.setScene(new Scene(createContent()));
