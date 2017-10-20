@@ -33,7 +33,6 @@ public class Main extends Application {
     private Disc[][] grid = new Disc[NUM_COLS][NUM_ROWS];
 
     private Pane discRoot = new Pane();
-
     //private List<Combo> combos = new ArrayList<>();
 
     public static void main(String[] args) {
