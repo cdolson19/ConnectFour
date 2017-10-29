@@ -1,51 +1,53 @@
 package MonteCarloTreeSearch;
 
-import Application.Constants;
-import Application.Disc;
+import Application.GameState;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static Application.Constants.NUM_COLS;
-
 public class MCTSTreeNode {
-    private int timesVisited;
-    private double averageUserWins;
-    private double userWins;
-    private double compWins;
-    private Disc[][] gameState;
-    private MCTSTreeNode parentState;
+    private GameState gameState;
+    private MCTSTreeNode parentNode;
     private List<MCTSTreeNode> successorStates;
 
-    public MCTSTreeNode(Disc[][] state) {
-        timesVisited = 0;
-        averageUserWins = 0;
+    public MCTSTreeNode(GameState state) {
         successorStates = new ArrayList<>();
-        gameState = state;
+        this.gameState = new GameState(state);
     }
 
-    public int getTimesVisited() {
-        return timesVisited;
+    public MCTSTreeNode(MCTSTreeNode treeNode) {
+        this.gameState = new GameState(treeNode.getGameState());
+        this.parentNode = treeNode.getParentNode();
+        this.successorStates = treeNode.getSuccessorStates();
     }
 
-    public void visit() {
-        timesVisited++;
+    public GameState getGameState() {
+        return gameState;
     }
 
-    public double getUCB1Value(int timesParentVisited) {
-        return userWins/timesVisited + 2 * Math.sqrt(Math.log(timesParentVisited)/timesVisited);
+    public List<MCTSTreeNode> getSuccessorStates() {
+        return successorStates;
     }
 
-    public void generateSuccessors() {
-
+    public MCTSTreeNode getRandomSuccessor() {
+        Random random = new Random();
+        int childIndex = random.nextInt(successorStates.size());
+        return successorStates.get(childIndex);
     }
 
-
-
-    public boolean rollout() {
-
-        //while()
-        return true;
+    public MCTSTreeNode getParentNode() {
+        return parentNode;
     }
+
+    public void setParentNode(MCTSTreeNode parent) {
+        this.parentNode = parent;
+    }
+
+    public MCTSTreeNode getSuccessorWithMaxScore() {
+        // DEBUG
+        //System.out.println("Max Successor Value: " + UCT.findBestNodeWithUCT(this));
+        return UCT.findBestNodeWithUCT(this);
+    }
+
 }
