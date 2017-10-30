@@ -44,6 +44,10 @@ public class MCTSTreeNode {
         this.parentNode = parent;
     }
 
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
     public MCTSTreeNode getSuccessorWithMaxScore() {
         // DEBUG
         //System.out.println("Max Successor Value: " + UCT.findBestNodeWithUCT(this));

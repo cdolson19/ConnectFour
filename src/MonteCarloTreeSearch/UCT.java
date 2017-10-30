@@ -9,15 +9,15 @@ public class UCT {
 
     public static double uctValue(int totalVisit, double nodeWinScore, int nodeVisit) {
         // DEBUG
-        System.out.print("UCTValue for total visit " + totalVisit + " winScore " + nodeWinScore + " nodeVisit " + nodeVisit + " : ");
+        //System.out.print("UCTValue for total visit " + totalVisit + " winScore " + nodeWinScore + " nodeVisit " + nodeVisit + " : ");
         if (nodeVisit == 0.0) {
             // DEBUG
-            System.out.println("max");
+            //System.out.println("max");
             return Double.MAX_VALUE;
         }
         // DEBUG
-        System.out.println((nodeWinScore / (double) nodeVisit)
-                + Constants.UCT_EXPLORATION_CONSTANT * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit));
+        //System.out.println((nodeWinScore / (double) nodeVisit)
+        //        + Constants.UCT_EXPLORATION_CONSTANT * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit));
         return (nodeWinScore / (double) nodeVisit)
                 + Constants.UCT_EXPLORATION_CONSTANT * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
     }

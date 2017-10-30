@@ -60,21 +60,29 @@ public class Board {
     public int checkStatus() {
         int winner = checkForWinInLine(horizontalLines);
         if (winner != Constants.IN_PROGRESS) {
+            // DEBUG
+            System.out.println("Horizontal Winner");
             return winner;
         }
 
         winner = checkForWinInLine(verticalLines);
         if (winner != Constants.IN_PROGRESS) {
+            // DEBUG
+            System.out.println("Vertical Winner");
             return winner;
         }
 
         winner = checkForWinInLine(upwardDiagonalLines);
         if (winner != Constants.IN_PROGRESS) {
+            // DEBUG
+            System.out.println("Upward Diagonal Winner");
             return winner;
         }
 
         winner = checkForWinInLine(downwardDiagonalLines);
         if (winner != Constants.IN_PROGRESS) {
+            // DEBUG
+            System.out.println("Downward Diagonal Winner");
             return winner;
         }
 

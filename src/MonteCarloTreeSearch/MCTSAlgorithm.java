@@ -12,8 +12,6 @@ public class MCTSAlgorithm {
 
     public static int findNextMove(Board board, int playerNo) {
         // define an end time which will act as a terminating condition
-        // DEBUG
-        // System.out.println("findNextMove start");
 
         opponent = 1 - playerNo;
         MCTSTree mctsTree = new MCTSTree(new Board(board));
@@ -24,61 +22,56 @@ public class MCTSAlgorithm {
         // DEBUG
         System.out.print(root.getGameState().getBoard().toString());
 
+
+        // Comp can win next move
+        MCTSTreeNode tempNode = new MCTSTreeNode(new GameState(root.getGameState()));
+        int col = compCanWin(tempNode);
+        if(col != -1) {
+            return col;
+        }
+
+        // Can user win next move
+        tempNode = new MCTSTreeNode(new GameState(root.getGameState()));
+        col = userCanWin(tempNode);
+        if(col != -1) {
+            return col;
+        }
+
         int iteration = 0;
         while (iteration++ < 100) {
             MCTSTreeNode promisingNode = selectPromisingNode(root);
-            // DEBUG
-            // System.out.print("after selectPromisingNode");
-            // System.out.print(root.getGameState().getBoard().toString());
             if (promisingNode.getGameState().getBoard().checkStatus()
                     == Constants.IN_PROGRESS) {
                 expandNode(promisingNode);
             }
-            // DEBUG
-            // System.out.print("after expandNode");
-            // System.out.print(root.getGameState().getBoard().toString());
             MCTSTreeNode nodeToExplore = promisingNode;
-            // DEBUG
-            // System.out.print("after re-assigning node");
-            // System.out.print(root.getGameState().getBoard().toString());
             // If the node is not a leaf node, then get a random successor
             if (promisingNode.getSuccessorStates().size() > 0) {
                 nodeToExplore = promisingNode.getRandomSuccessor();
             }
             int playoutResult = simulateRandomPlayout(nodeToExplore);
-            // DEBUG
-            System.out.println("PlayoutResult: " + playoutResult);
-            // System.out.print("after simulateRandomPlayout");
-            // System.out.print(root.getGameState().getBoard().toString());
             backPropagation(nodeToExplore, playoutResult);
-            // DEBUG
-            // System.out.println(root.getGameState().getVisitCount());
-            // System.out.print("after backPropagation");
-            // System.out.print(root.getGameState().getBoard().toString());
         }
 
 
         MCTSTreeNode winnerNode = root.getSuccessorWithMaxScore();
         int column = getColumnToMoveInto(mctsTree.getRoot().getGameState().getBoard(), winnerNode.getGameState().getBoard());
         mctsTree.setRoot(winnerNode);
-        // DEBUG
-        // System.out.print("findNextMove ");
-        // System.out.println("Col: " + column);
         return column;
     }
 
     private static int getColumnToMoveInto(Board currentBoard, Board nextBoard) {
-        // DEBUG
-        // System.out.println("getColumnToMoveInto");
         for (int row = 0; row < Constants.NUM_ROWS; row++) {
             for (int col = 0; col < Constants.NUM_COLS; col++) {
                 // DEBUG
-                //if (currentBoard.getDisc(col, row) != null) {
+                // if (currentBoard.getDisc(col, row) != null) {
                 //    System.out.println("Not Null Current Board Position (" + col + ", " + row + ")");
                 //}
+                //System.out.println(currentBoard.toString());
                 //if (nextBoard.getDisc(col, row) != null) {
                 //    System.out.println("Not Null Next Board Position (" + col + ", " + row + ")");
                 //}
+                //System.out.println(nextBoard.toString());
                 if (currentBoard.getDisc(col, row) == null && nextBoard.getDisc(col, row) != null) {
                     return col;
                 }
@@ -88,10 +81,8 @@ public class MCTSAlgorithm {
     }
 
     private static MCTSTreeNode selectPromisingNode(MCTSTreeNode rootNode) {
+        //MCTSTreeNode node = new MCTSTreeNode(rootNode);
         MCTSTreeNode node = rootNode;
-        // DEBUG
-        // System.out.println("Node: " + node.getGameState().getBoard().toString());
-        // System.out.println("Root: " + rootNode.getGameState().getBoard().toString());
         // Traverse down tree until a leaf is reached
         while (node.getSuccessorStates().size() != 0) {
             node = UCT.findBestNodeWithUCT(node);
@@ -116,20 +107,11 @@ public class MCTSAlgorithm {
 
     private static void backPropagation(MCTSTreeNode nodeToExplore, int playerNo) {
         MCTSTreeNode tempNode = nodeToExplore;
-        // DEBUG
-        // System.out.println("Start of backPropagation");
         while (tempNode != null) {
             tempNode.getGameState().addVisit();
-            // DEBUG
-            // System.out.println("Visit Count: " + tempNode.getGameState().getVisitCount());
             if (tempNode.getGameState().getPlayerNum() == playerNo && playerNo == Constants.COMP_MOVE) {
-                // DEBUG Test this COMP_WIN
-                //tempNode.getGameState().addScore(Constants.COMP_WIN);
                 tempNode.getGameState().addWin();
             }
-            //else if (tempNode.getGameState().getPlayerNum() == playerNo && playerNo == Constants.USER_MOVE) {
-            //    tempNode.getGameState().addScore(Constants.USER_WIN);
-            //}
             tempNode = tempNode.getParentNode();
         }
     }
@@ -159,5 +141,43 @@ public class MCTSAlgorithm {
             boardStatus = tempState.getBoard().checkStatus();
         }
         return boardStatus;
+    }
+
+    private static int compCanWin(MCTSTreeNode node){
+        MCTSTreeNode nextMove = node;
+        //GameState gameState = nextMove.getGameState();
+        //gameState.setPlayerNum(Constants.USER_MOVE);
+        //nextMove.setGameState(gameState);
+        nextMove.getGameState().setPlayerNum(Constants.USER_MOVE);
+        expandNode(nextMove);
+        for (MCTSTreeNode successorNode : nextMove.getSuccessorStates()) {
+            if(successorNode.getGameState().getBoard().checkStatus() == Constants.COMP_WIN) {
+                int col = getColumnToMoveInto(node.getGameState().getBoard(), successorNode.getGameState().getBoard());
+                // DEBUG
+                System.out.println("Comp can win at col: " + col);
+                return col;
+            }
+        }
+
+        return -1;
+    }
+
+    private static int userCanWin(MCTSTreeNode node){
+        MCTSTreeNode nextMove = node;
+        //GameState gameState = nextMove.getGameState();
+        //gameState.setPlayerNum(Constants.COMP_MOVE);
+        //nextMove.setGameState(gameState);
+        nextMove.getGameState().setPlayerNum(Constants.COMP_MOVE);
+        expandNode(nextMove);
+
+        for (MCTSTreeNode successorNode : nextMove.getSuccessorStates()) {
+            if(successorNode.getGameState().getBoard().checkStatus() == Constants.USER_WIN) {
+                int col = getColumnToMoveInto(node.getGameState().getBoard(), successorNode.getGameState().getBoard());
+                System.out.println("User can win at col: " + col);
+                return col;
+            }
+        }
+
+        return -1;
     }
 }
