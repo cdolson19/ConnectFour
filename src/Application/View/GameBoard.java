@@ -1,5 +1,7 @@
-package Application;
+package Application.View;
 
+import Application.Constants;
+import Application.GameBoardController;
 import javafx.scene.Parent;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
@@ -16,7 +18,10 @@ import static Application.Constants.NUM_COLS;
 import static Application.Constants.NUM_ROWS;
 import static Application.Constants.TILE_SIZE;
 
-class GameBoard {
+/**
+ * This class represents the game board view for the connect 4 game.
+ */
+public class GameBoard {
 
     private static Pane discRoot = new Pane();
 
@@ -25,7 +30,7 @@ class GameBoard {
      *
      * @return the Pane that contains the grid and columns
      */
-    static Parent createGameBoardContent(Pane root) {
+    public static Parent createGameBoardContent(Pane root) {
         //Pane root = new Pane();
         root.getChildren().add(discRoot);
 
@@ -53,7 +58,7 @@ class GameBoard {
                 circle.setTranslateX(col * (TILE_SIZE + 5) + TILE_SIZE / 4);
                 circle.setTranslateY(row * (TILE_SIZE + 5) + TILE_SIZE / 4);
 
-                shape = shape.subtract(shape, circle);
+                shape = Shape.subtract(shape, circle);
             }
         }
         // Create light
@@ -99,8 +104,19 @@ class GameBoard {
         return columns;
     }
 
+    /**
+     * Adds a new disc to the pane.
+     *
+     * @param disc the new disc to add.
+     */
     public static void addDiscToRoot(Disc disc) {
         discRoot.getChildren().add(disc);
     }
 
+    /**
+     * Removes all discs from the pane of discs.
+     */
+    public static void clearDiscs() {
+        discRoot.getChildren().clear();
+    }
 }

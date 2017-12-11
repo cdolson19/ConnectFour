@@ -1,6 +1,7 @@
 package Application;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+import Application.View.BoardLines;
+import Application.View.Disc;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -10,24 +11,30 @@ import java.util.List;
 import static Application.Constants.NUM_COLS;
 import static Application.Constants.NUM_ROWS;
 
+/**
+ * This class represents a possible connect 4 board using a 2D array to represent
+ * the board locations.
+ */
 public class Board {
 
     private static BoardLines boardLines = new BoardLines();
-    private static List<List<Point2D>> horizontalLines = boardLines.getHorizontalLines();
-    private static List<List<Point2D>> verticalLines = boardLines.getVerticalLines();
-    private static List<List<Point2D>> upwardDiagonalLines = boardLines.getUpwardDiagonalLines();
-    private static List<List<Point2D>> downwardDiagonalLines = boardLines.getDownwardDiagonalLines();
-
     private Disc[][] boardValues;
     private int totalMoves;
 
-
-    public Board() {
+    /**
+     * Constructor
+     */
+    Board() {
         boardValues = new Disc[NUM_COLS][NUM_ROWS];
         totalMoves = 0;
     }
 
-    public Board(Board board) {
+    /**
+     * Constructor
+     *
+     * @param board copies the existing board into this instance.
+     */
+    Board(Board board) {
         this.boardValues = new Disc[NUM_COLS][NUM_ROWS];
         for (int col = 0; col < NUM_COLS; col++) {
             boardValues[col] = Arrays.copyOf(board.boardValues[col], board.boardValues[col].length);
@@ -35,76 +42,86 @@ public class Board {
         this.totalMoves = board.getTotalMoves();
     }
 
+    /**
+     * Returns the total moves value.
+     *
+     * @return the total moves that led to this board layout.
+     */
     public int getTotalMoves() {
         return totalMoves;
     }
 
-    public Disc[][] getBoardValues() {
-        return boardValues.clone();
-    }
-
-    public void setTotalMoves(int totalMoves) {
-        this.totalMoves = totalMoves;
-    }
-
-    public void setBoardValues(Disc[][] boardValues) {
-        this.boardValues = boardValues.clone();
-    }
-
+    /**
+     * Adds a disc to the board.
+     *
+     * @param player the player who placed the disc.
+     * @param column the column to place the disc.
+     * @param row    the row to place the disc.
+     * @return returns the disc that was added.
+     */
     public Disc performMove(int player, int column, int row) {
         this.totalMoves++;
         boolean userMove = player == Constants.USER_MOVE;
         return boardValues[column][row] = new Disc(userMove);
     }
 
-    public int checkStatus() {
-        int winner = checkForWinInLine(horizontalLines);
+    /**
+     * Checks for a user win, computer win, draw, or if the game is still in progress.
+     *
+     * @return a double constant representing a user win, computer win, draw, or still in progress.
+     */
+    public double checkStatus() {
+        double winner = checkForWinInLine(boardLines.getHorizontalLines());
         if (winner != Constants.IN_PROGRESS) {
-            // DEBUG
-            System.out.println("Horizontal Winner");
             return winner;
         }
 
-        winner = checkForWinInLine(verticalLines);
+        winner = checkForWinInLine(boardLines.getVerticalLines());
         if (winner != Constants.IN_PROGRESS) {
-            // DEBUG
-            System.out.println("Vertical Winner");
             return winner;
         }
 
-        winner = checkForWinInLine(upwardDiagonalLines);
+        winner = checkForWinInLine(boardLines.getUpwardDiagonalLines());
         if (winner != Constants.IN_PROGRESS) {
-            // DEBUG
-            System.out.println("Upward Diagonal Winner");
             return winner;
         }
 
-        winner = checkForWinInLine(downwardDiagonalLines);
+        winner = checkForWinInLine(boardLines.getDownwardDiagonalLines());
         if (winner != Constants.IN_PROGRESS) {
-            // DEBUG
-            System.out.println("Downward Diagonal Winner");
             return winner;
         }
 
-        if (findPossibleColumns().isEmpty()) {
+        if (findPossibleActions().isEmpty()) {
             return Constants.DRAW_SCORE;
         } else {
             return Constants.IN_PROGRESS;
         }
     }
 
-
-    public List<Integer> findPossibleColumns() {
+    /**
+     * Returns a list of all possible actions, represented as the column numbers a disc can be placed.
+     *
+     * @return a list of all possible actions.
+     */
+    public List<Integer> findPossibleActions() {
         List<Integer> possibleColumns = new ArrayList<>();
         for (Integer column = 0; column < NUM_COLS; column++) {
             // Check if the top position is empty
-            if (boardValues[column][0] == null) {
+            if (isValidColumn(column)) {
                 possibleColumns.add(column);
             }
         }
-        // DEBUG
-        //System.out.print(possibleColumns);
         return possibleColumns;
+    }
+
+    /**
+     * Denotes whether a move can be played into a given column by checking if the column is full.
+     *
+     * @param column an int, the column number to check if it is full
+     * @return true if a disc can be placed into the column, false if the column is full
+     */
+    private boolean isValidColumn(int column) {
+        return boardValues[column][0] == null;
     }
 
     /**
@@ -115,32 +132,15 @@ public class Board {
      */
     public int getNextEmptyRow(int column) {
         // Find the lowest row to place the disc
-        // DEBUG
-        // System.out.print("getNextEmptyRow ");
         int row = NUM_ROWS - 1;
         do {
-            // DEBUG
-            // System.out.println("Col: " + column + " Row: " + row);
             if ((boardValues[column][row] == null)) {
                 break;
             }
             row--;
         } while (row >= 0);
-        // DEBUG
-        //System.out.println(row);
         return row;
     }
-
-    /**
-     * Denotes whether a move can be played into a given column by checking if the column is full.
-     *
-     * @param column an int, the column number to check if it is full
-     * @return true if a disc can be placed into the column, false if the column is full
-     */
-    boolean validColumn(int column) {
-        return boardValues[column][0] == null;
-    }
-
 
     /**
      * Gets a disc from a particular column and row position in the discBoard.
@@ -156,7 +156,14 @@ public class Board {
         return boardValues[column][row];
     }
 
-    public int checkForWinInLine(List<List<Point2D>> lines) {
+    /**
+     * Checks for 4 tokens from the same player in a row.
+     *
+     * @param lines the lines to check to see if a line is filled with the same player's tokens.
+     * @return the user win constant for a user win, the computer win constant for a computer win
+     * else the in progress constant.
+     */
+    private double checkForWinInLine(List<List<Point2D>> lines) {
         int chain;
         boolean userMove;
 
@@ -186,14 +193,19 @@ public class Board {
         return Constants.IN_PROGRESS;
     }
 
+    /**
+     * To String method to postMCTSDisplay a board.
+     *
+     * @return a string represented the current board.
+     */
     @Override
     public String toString() {
         String string = "";
-        for(int row = 0; row < Constants.NUM_ROWS; row++) {
+        for (int row = 0; row < Constants.NUM_ROWS; row++) {
             string += "\nRow " + row + ": ";
-            for(int col = 0; col < Constants.NUM_COLS; col++) {
-                if(getDisc(col, row) != null) {
-                    if(getDisc(col, row).getMove()) {
+            for (int col = 0; col < Constants.NUM_COLS; col++) {
+                if (getDisc(col, row) != null) {
+                    if (getDisc(col, row).getMove()) {
                         string += "  " + 'U' + "  ";
                     } else {
                         string += "  " + 'C' + "  ";
@@ -205,5 +217,32 @@ public class Board {
         }
         string += "\n";
         return string;
+    }
+
+    /**
+     * Checks if two board are equal.
+     *
+     * @param o the board to check.
+     * @return true if the boards are equal, otherwise false.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Board)) return false;
+        Board board = (Board) o;
+        for (int column = 0; column < boardValues.length; column++) {
+            for (int row = 0; row < boardValues[column].length; row++) {
+                if (board.boardValues[column][row] == null && boardValues[column][row] != null) {
+                    return false;
+                } else if (board.boardValues[column][row] != null && boardValues[column][row] == null) {
+                    return false;
+                } else if (board.boardValues[column][row] != null && boardValues[column][row] != null) {
+                    if (board.boardValues[column][row].getMove() != boardValues[column][row].getMove()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

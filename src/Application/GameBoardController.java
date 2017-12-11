@@ -1,16 +1,20 @@
 package Application;
 
-import MonteCarloTreeSearch.MCTSAlgorithm;
-import MonteCarloTreeSearch.MCTSTreeNode;
+import Application.View.Disc;
+import Application.View.GameBoard;
+import Application.View.GameOverBox;
+import Application.View.MCTSInfoBox;
+import Application.MonteCarloTreeSearch.MCTSAlgorithm;
+import Application.MonteCarloTreeSearch.MCTSTreeNode;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
-import java.util.Random;
-
-import static Application.Constants.NUM_COLS;
 import static Application.Constants.TILE_SIZE;
 
-class GameBoardController {
+/**
+ * This class is a controller for the javafx view of the connect 4 board.
+ */
+public class GameBoardController {
 
     private static boolean playable = true;
     private static boolean userMove = true;
@@ -22,14 +26,10 @@ class GameBoardController {
      * Places the disc in the next available row in a given column.
      *
      * @param playerID the ID of the player or computer depending on who is making the move.
-     * @param column the column to attempt to place the disc into.
+     * @param column   the column to attempt to place the disc into.
      */
-    static void placeDisc(int playerID, int column) {
-        // DEBUG
-        // System.out.println("placeDisc");
+    public static void placeDisc(int playerID, int column) {
         if (userMove && !playable) {
-            // DEBUG
-            System.out.println("It is the user's turn, but not a playable time");
             return;
         }
         // Prevent the user from making another move
@@ -37,8 +37,6 @@ class GameBoardController {
 
         // Find the lowest row to place the disc
         int row = board.getNextEmptyRow(column);
-        // DEBUG
-        // System.out.println("Col: " + column + " Row: " + row);
 
         // Return if all rows were filled
         if (userMove && row < 0) {
@@ -50,19 +48,42 @@ class GameBoardController {
         addDiscToBoard(playerID, column, row);
     }
 
+    /**
+     * Add a disc to the given location.
+     *
+     * @param playerID the player who made the move.
+     * @param column   the column to place the disc.
+     * @param row      the row to place the disc.
+     */
     private static void addDiscToBoard(int playerID, int column, int row) {
-        // DEBUG
-        // System.out.println("addDiscToBoard");
         Disc disc = gameState.getBoard().performMove(playerID, column, row);
+        // Find the successor node from the current node that represents the next move.
+        MCTSTreeNode nextNode = null;
+        for (MCTSTreeNode node : rootNode.getSuccessorStates()) {
+            if (node.getGameState().getBoard().equals(gameState.getBoard())) {
+                nextNode = node;
+            }
+        }
+        if (nextNode == null) {
+            nextNode = new MCTSTreeNode(gameState);
+            nextNode.setParentNode(rootNode);
+        }
+        rootNode = nextNode;
+
+        // Add the disc to the board.
         GameBoard.addDiscToRoot(disc);
         disc.setTranslateX(column * (TILE_SIZE + 5) + TILE_SIZE / 4);
-
+        // Begin the animation to add the disc to the board.
         addDiscToBoardAnimation(row, disc);
     }
 
+    /**
+     * Executes animation of token falling down a column.
+     *
+     * @param row  the row to place the token.
+     * @param disc the disc to place.
+     */
     private static void addDiscToBoardAnimation(int row, Disc disc) {
-        // DEBUG
-        // System.out.println("addDiscToBoardAnimation");
         // Display the animation of the disc dropping into position
         TranslateTransition animation = new TranslateTransition(Duration.seconds(0.25), disc);
         animation.setToY(row * (TILE_SIZE + 5) + TILE_SIZE / 4);
@@ -70,14 +91,10 @@ class GameBoardController {
             // Check if the game has ended
             if (!gameOver()) {
                 if (userMove) {
-                    // DEBUG
-                    // System.out.println("The user completed their turn");
                     userMove = !userMove;
-                    computerTurn();
+                    showPreMCTSInformation();
                 } else {
                     // Allow the user to play again
-                    // DEBUG
-                    // System.out.println("The computer completed its turn");
                     playable = true;
                     userMove = !userMove;
                 }
@@ -86,16 +103,20 @@ class GameBoardController {
         animation.play();
     }
 
-
+    /**
+     * Checks if the game is over and opens the game over postMCTSDisplay if it is.
+     *
+     * @return true if the game is over, otherwise false.
+     */
     private static boolean gameOver() {
-        int gameStatus = gameState.getBoard().checkStatus();
-        if(gameStatus == Constants.DRAW_SCORE) {
+        double gameStatus = gameState.getBoard().checkStatus();
+        if (gameStatus == Constants.DRAW_SCORE) {
             displayGameOverDisplay(true);
             return true;
-        } else if(gameStatus == Constants.COMP_WIN) {
+        } else if (gameStatus == Constants.COMP_WIN) {
             displayGameOverDisplay(false);
             return true;
-        } else if(gameStatus == Constants.USER_WIN) {
+        } else if (gameStatus == Constants.USER_WIN) {
             displayGameOverDisplay(false);
             return true;
         } else {
@@ -109,37 +130,42 @@ class GameBoardController {
     private static void displayGameOverDisplay(boolean draw) {
         String winner;
         if (draw) {
-            // DEBUG
-            System.out.println("Draw");
             winner = "The Game Was A Draw!";
         } else {
-            // DEBUG
-            System.out.println("Winner: " + (userMove ? "Red" : "Yellow"));
             winner = (userMove ? "Red" : "Yellow") + " Won!";
         }
         GameOverBox.display("Game Over", winner);
+        userMove = true;
     }
-
 
     /**
-     * Begins the MCTS algorithm to conduct the computer's next turn
+     * Begins the MCTS algorithm to find the computer's next turn
+     * by displaying the information box containing details about the current state of the MCTS tree.
      */
-    private static void computerTurn() {
-        //Random random = new Random();
-        //int column;
-        //do {
-        //    column = random.nextInt(NUM_COLS);
-        //} while (!gameState.getBoard().validColumn(column));
-        // DEBUG
-        //System.out.println("computerTurn start");
-        int col = MCTSAlgorithm.findNextMove(board, Constants.USER_MOVE);
+    private static void showPreMCTSInformation() {
+        MCTSInfoBox.preMCTSDisplay(rootNode);
 
-        // DEBUG
-        //System.out.println("computerTurn");
-        //System.out.println("Computer Column: " + col);
-
-        placeDisc(Constants.COMP_MOVE, col);
     }
 
+    /**
+     * Executes the MCTS algorithm to find the computer's next turn
+     * and displays the information box containing details about the results of the MCTS tree.
+     */
+    public static void computerTurn() {
+        int col = MCTSAlgorithm.findNextMove(rootNode);
+        MCTSInfoBox.postMCTSDisplay(rootNode, col);
+    }
 
+    /**
+     * Clears the board and restarts the game.
+     */
+    public static void restartGame() {
+        GameBoard.clearDiscs();
+        board = new Board();
+        gameState = new GameState(board);
+        rootNode = new MCTSTreeNode(gameState);
+        MCTSAlgorithm.setIterations(Constants.ITERATIONS);
+        userMove = true;
+        playable = true;
+    }
 }

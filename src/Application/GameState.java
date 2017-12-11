@@ -4,73 +4,72 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class represents the current state of the game.
+ * Containing a board and the player's turn.
+ */
 public class GameState {
     private Board board;
     private int playerNum;
-    private int visitCount;
-    private double winScore;
 
-    public GameState(Board board) {
+    /**
+     * Constructor that sets the game state's board to be the given board.
+     *
+     * @param board the board to set.
+     */
+    GameState(Board board) {
         this.board = board;
-        visitCount = 0;
-        winScore = 0;
     }
 
+    /**
+     * Constructor that uses a game state to set this game state's board and player number.
+     *
+     * @param gameState the game state used to initialize the new game state.
+     */
     public GameState(GameState gameState) {
         this.board = new Board(gameState.getBoard());
         this.playerNum = gameState.getPlayerNum();
-        this.visitCount = gameState.getVisitCount();
-        this.winScore = gameState.getWinScore();
     }
 
+    /**
+     * Returns the board.
+     *
+     * @return the board.
+     */
     public Board getBoard() {
         return board;
     }
 
-    public int getVisitCount() {
-        return visitCount;
-    }
-
-    public double getWinScore() {
-        return winScore;
-    }
-
-    public int getPlayerNum() {
+    /**
+     * Returns the player number
+     *
+     * @return 0 for user move, 1 for computer move.
+     */
+    private int getPlayerNum() {
         return playerNum;
     }
 
+    /**
+     * Returns the opponent to the current player.
+     *
+     * @return the player who will have the next move.
+     */
     public int getOpponent() {
         return playerNum == Constants.USER_MOVE ? Constants.COMP_MOVE : Constants.USER_MOVE;
     }
 
-    public void setBoard(Board gameboard) {
-        this.board = gameboard;
-    }
-
+    /**
+     * Sets the player number.
+     *
+     * @param playerNum 0 for user move, 1 for computer move.
+     */
     public void setPlayerNum(int playerNum) {
         this.playerNum = playerNum;
     }
 
-    public void setVisitCount(int visitCount) {
-        this.visitCount = visitCount;
-    }
-
-    public void setWinScore(double winScore) {
-        this.winScore = winScore;
-    }
-
-    public void addVisit() {
-        visitCount++;
-    }
-
-    public void addWin(){
-        winScore++;
-    }
-
-    public void addScore(double score) {
-        winScore += score;
-    }
-
+    /**
+     * Alternates whose turn it is.
+     */
     public void togglePlayer() {
         if (playerNum == Constants.USER_MOVE) {
             playerNum = Constants.COMP_MOVE;
@@ -79,15 +78,16 @@ public class GameState {
         }
     }
 
+    /**
+     * Returns a list of game states containing all possible next moves.
+     *
+     * @return a list of game states containing all possible next moves.
+     */
     public List<GameState> getAllPossibleStates() {
-        // DEBUG
-        // System.out.println("getAllPossibleStates");
         List<GameState> successorStates = new ArrayList<>();
-        List<Integer> possibleColumns = board.findPossibleColumns();
+        List<Integer> possibleColumns = board.findPossibleActions();
         for (Integer column : possibleColumns) {
             int row = board.getNextEmptyRow(column);
-            // DEBUG
-            // System.out.println("Column: " + column + " Row: " + row);
             Board successorBoard = new Board(board);
             successorBoard.performMove(getOpponent(), column, row);
             successorStates.add(new GameState(successorBoard));
@@ -95,20 +95,18 @@ public class GameState {
         return successorStates;
     }
 
+    /**
+     * Executes a random move on the board.
+     */
     public void randomPlay() {
-        // DEBUG
-        // System.out.println("randomPlay");
-        List<Integer> possibleColumns = board.findPossibleColumns();
+        List<Integer> possibleColumns = board.findPossibleActions();
         Random random = new Random();
         int columnIndex, column, row;
         columnIndex = random.nextInt(possibleColumns.size());
         column = possibleColumns.get(columnIndex);
         // Get the row to place the next disc
         row = board.getNextEmptyRow(column);
-        // DEBUG
-        // System.out.println("Row: " + row);
         // Add the disc to the discBoard
         board.performMove(playerNum, column, row);
     }
-
 }
