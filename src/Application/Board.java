@@ -24,7 +24,7 @@ public class Board {
     /**
      * Constructor
      */
-    Board() {
+    public Board() {
         boardValues = new Disc[NUM_COLS][NUM_ROWS];
         totalMoves = 0;
     }
@@ -34,7 +34,7 @@ public class Board {
      *
      * @param board copies the existing board into this instance.
      */
-    Board(Board board) {
+    public Board(Board board) {
         this.boardValues = new Disc[NUM_COLS][NUM_ROWS];
         for (int col = 0; col < NUM_COLS; col++) {
             boardValues[col] = Arrays.copyOf(board.boardValues[col], board.boardValues[col].length);

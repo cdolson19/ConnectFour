@@ -17,7 +17,7 @@ public class GameState {
      *
      * @param board the board to set.
      */
-    GameState(Board board) {
+    public GameState(Board board) {
         this.board = board;
     }
 

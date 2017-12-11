@@ -95,7 +95,7 @@ public class MCTSAlgorithm {
      * @param rootNode the node to start searching from.
      * @return the MCTS tree node to explore.
      */
-    private static MCTSTreeNode selectPromisingNode(MCTSTreeNode rootNode) {
+    public static MCTSTreeNode selectPromisingNode(MCTSTreeNode rootNode) {
         MCTSTreeNode node = rootNode;
         while (node.getSuccessorStates().size() != 0) {
             node = UCT.findBestNodeWithUCT(node);
@@ -108,7 +108,7 @@ public class MCTSAlgorithm {
      *
      * @param node the MCTSTreeNode to find all successors of.
      */
-    private static void expandNode(MCTSTreeNode node) {
+    public static void expandNode(MCTSTreeNode node) {
         List<GameState> possibleStates = node.getGameState().getAllPossibleStates();
         possibleStates.forEach(state -> {
             MCTSTreeNode newNode = new MCTSTreeNode(state);
@@ -125,7 +125,7 @@ public class MCTSAlgorithm {
      * @param nodeToExplore the node that was explored.
      * @param playoutResult the simulation result.
      */
-    private static void backPropagation(MCTSTreeNode nodeToExplore, double playoutResult) {
+    public static void backPropagation(MCTSTreeNode nodeToExplore, double playoutResult) {
         MCTSTreeNode tempNode = nodeToExplore;
         while (tempNode != null) {
             tempNode.addVisit();
@@ -146,7 +146,7 @@ public class MCTSAlgorithm {
      * @param node the node to start simulation from.
      * @return a constants representing the result of the game.
      */
-    private static double simulateRandomPlayout(MCTSTreeNode node) {
+    public static double simulateRandomPlayout(MCTSTreeNode node) {
         // Simulate until over
         GameState tempState = new GameState(node.getGameState());
         double boardStatus = tempState.getBoard().checkStatus();

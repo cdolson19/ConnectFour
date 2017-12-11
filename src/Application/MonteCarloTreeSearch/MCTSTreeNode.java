@@ -161,5 +161,4 @@ public class MCTSTreeNode {
                 this.getSuccessorStates(),
                 Comparator.comparing(c -> c.getAverageStateScore()));
     }
-
 }
