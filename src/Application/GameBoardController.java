@@ -1,11 +1,13 @@
 package Application;
 
-import Application.View.Disc;
+import Application.Model.Board;
+import Application.Model.Disc;
+import Application.Model.GameState;
 import Application.View.GameBoard;
 import Application.View.GameOverBox;
 import Application.View.MCTSInfoBox;
-import Application.MonteCarloTreeSearch.MCTSAlgorithm;
-import Application.MonteCarloTreeSearch.MCTSTreeNode;
+import Application.Model.MonteCarloTreeSearch.MCTSAlgorithm;
+import Application.Model.MonteCarloTreeSearch.MCTSTreeNode;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 

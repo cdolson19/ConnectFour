@@ -1,4 +1,4 @@
-package Application.MonteCarloTreeSearch;
+package Application.Model.MonteCarloTreeSearch;
 
 import Application.Constants;
 
@@ -23,8 +23,8 @@ public class UCT {
         if (node.getVisitCount() == 0.0) {
             return Double.MAX_VALUE;
         }
-        return (node.getAverageStateScore()
-                + Constants.UCT_EXPLORATION_CONSTANT * Math.sqrt(Math.log(parentVisits) / node.getVisitCount()));
+        return (node.getAverageStateScore() + Constants.UCT_EXPLORATION_CONSTANT *
+                Math.sqrt(Math.log(parentVisits) / node.getVisitCount()));
     }
 
     /**

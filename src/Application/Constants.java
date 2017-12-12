@@ -17,7 +17,8 @@ public class Constants {
     public static final int USER_MOVE = 0;
     public static final int COMP_MOVE = 1;
 
-    public static final int ITERATIONS = 1500;
+    public static final int ITERATIONS = 1000;
+    public static final int SIMULATIONS = 5;
 
-    public static double UCT_EXPLORATION_CONSTANT = 2;
+    public static double UCT_EXPLORATION_CONSTANT = 3.5;
 }

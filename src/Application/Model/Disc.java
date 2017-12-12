@@ -1,4 +1,4 @@
-package Application.View;
+package Application.Model;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -17,7 +17,7 @@ public class Disc extends Circle {
      *
      * @param userMove which player placed the disc. True for user, false for computer.
      */
-    public Disc(boolean userMove) {
+    Disc(boolean userMove) {
         super(TILE_SIZE / 2, userMove ? Color.RED : Color.YELLOW);
         this.userMove = userMove;
 

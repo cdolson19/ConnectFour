@@ -1,8 +1,8 @@
 package Tests;
 
-import Application.Board;
+import Application.Model.Board;
 import Application.Constants;
-import Application.GameState;
+import Application.Model.GameState;
 import org.junit.Assert;
 import org.junit.Test;
 

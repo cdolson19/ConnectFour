@@ -17,10 +17,9 @@ public class Main extends Application {
     /**
      * Start the Application
      * @param primaryStage a Stage provided upon start
-     * @throws Exception thrown if error during setup
      */
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("Connect Four");
         primaryStage.setScene(new Scene(GameBoard.createGameBoardContent(root)));
         primaryStage.show();

@@ -2,6 +2,7 @@ package Application.View;
 
 import Application.Constants;
 import Application.GameBoardController;
+import Application.Model.Disc;
 import javafx.scene.Parent;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
@@ -37,7 +38,6 @@ public class GameBoard {
         Shape gridShape = makeGrid();
         root.getChildren().add(gridShape);
         root.getChildren().addAll(makeColumns());
-
         return root;
     }
 

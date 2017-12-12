@@ -1,7 +1,6 @@
-package Application;
+package Application.Model;
 
-import Application.View.BoardLines;
-import Application.View.Disc;
+import Application.Constants;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;

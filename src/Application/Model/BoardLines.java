@@ -1,4 +1,4 @@
-package Application.View;
+package Application.Model;
 
 import Application.Constants;
 import javafx.geometry.Point2D;
@@ -20,7 +20,7 @@ public class BoardLines {
     /**
      * Constructor, initializes the possible horizontal, vertical, and diagonal lines that can be filled.
      */
-    public BoardLines() {
+    BoardLines() {
         initializeHorizontalPoints();
         initializeVerticalPoints();
         initializeUpwardDiagonalPoints();

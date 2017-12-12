@@ -2,9 +2,9 @@ package Application.View;
 
 import Application.Constants;
 import Application.GameBoardController;
-import Application.MonteCarloTreeSearch.MCTSAlgorithm;
-import Application.MonteCarloTreeSearch.MCTSTreeNode;
-import Application.MonteCarloTreeSearch.UCT;
+import Application.Model.MonteCarloTreeSearch.MCTSAlgorithm;
+import Application.Model.MonteCarloTreeSearch.MCTSTreeNode;
+import Application.Model.MonteCarloTreeSearch.UCT;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -45,9 +45,8 @@ public class MCTSInfoBox {
         // List the constants used in the MCTS algorithm.
         Label constants = new Label(String.format("Constants:\n" +
                         "User Win Reward: %.2f   Comp Win Reward: %.2f   " +
-                        "Draw Reward: %.2f   UCT Exploration Constant %.2f",
-                Constants.USER_WIN, Constants.COMP_WIN,
-                Constants.DRAW_SCORE, Constants.UCT_EXPLORATION_CONSTANT));
+                        "Draw Reward: %.2f    UCT Exploration Constant %.2f",
+                Constants.USER_WIN, Constants.COMP_WIN, Constants.DRAW_SCORE, Constants.UCT_EXPLORATION_CONSTANT));
         actionLayout.getChildren().addAll(constants, new Separator());
 
         // Display MCTS data for each action
@@ -60,7 +59,7 @@ public class MCTSInfoBox {
             int column = MCTSAlgorithm.getColumnToMoveInto(root.getGameState().getBoard(), successor.getGameState().getBoard());
             Label nodeLabel = new Label();
             StringBuilder builder = new StringBuilder(String.format("Option %d    -    Action: Place disc in column %d\n", successorNum++, column + 1));
-            builder.append(String.format("UCT Value: %.5f            ", UCT.uctValue(root.getVisitCount(), successor)));
+            builder.append(String.format("UCT Value: %5.5f            ", UCT.uctValue(root.getVisitCount(), successor)));
             builder.append(String.format("Simulations Through This State: %d\n", successor.getVisitCount()));
             builder.append(String.format("Average Score: %.3f  -  ", successor.getAverageStateScore()));
             builder.append(String.format("Comp Wins: %d    ", successor.getCompWins()));
@@ -93,7 +92,7 @@ public class MCTSInfoBox {
         VBox actionLayout = generateSuccessorInformationBox(root);
 
         // Display number of visits through root node and the action to take.
-        Label iterationsLabel = new Label(String.format("MCTS Iterations Conducted This Turn: %d", MCTSAlgorithm.getIterations()));
+        Label iterationsLabel = new Label(String.format("MCTS Iterations Conducted This Turn: %d    Simulations per Iteration: %d", MCTSAlgorithm.getIterations(), Constants.SIMULATIONS));
         Label visitLabel = new Label(String.format("Cumulative Visits Through Current State: %d", root.getVisitCount()));
         Label action = new Label(String.format("Computer will place disc in column %d", col + 1));
         actionLayout.getChildren().addAll(iterationsLabel, visitLabel, new Separator(), action);

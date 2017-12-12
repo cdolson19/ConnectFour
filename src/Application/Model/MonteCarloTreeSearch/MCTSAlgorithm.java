@@ -1,8 +1,8 @@
-package Application.MonteCarloTreeSearch;
+package Application.Model.MonteCarloTreeSearch;
 
-import Application.Board;
+import Application.Model.Board;
 import Application.Constants;
-import Application.GameState;
+import Application.Model.GameState;
 
 import java.util.List;
 
@@ -54,8 +54,11 @@ public class MCTSAlgorithm {
             } else {
                 nodeToExplore = promisingNode.getRandomSuccessor();
             }
-            double playoutResult = simulateRandomPlayout(nodeToExplore);
-            backPropagation(nodeToExplore, playoutResult);
+            // Repeat a specified number of simulations
+            for(int simulation = 0; simulation < Constants.SIMULATIONS; simulation++) {
+                double playoutResult = simulateRandomPlayout(nodeToExplore);
+                backPropagation(nodeToExplore, playoutResult);
+            }
         }
 
         MCTSTreeNode winnerNode = root.getSuccessorWithMaxScore();
