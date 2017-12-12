@@ -1,14 +1,14 @@
-package Application.Model;
+package model.environment;
 
-import Application.Constants;
+import application.Constants;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static Application.Constants.NUM_COLS;
-import static Application.Constants.NUM_ROWS;
+import static application.Constants.NUM_COLS;
+import static application.Constants.NUM_ROWS;
 
 /**
  * This class represents a possible connect 4 board using a 2D array to represent

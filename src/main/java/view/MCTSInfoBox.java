@@ -1,10 +1,7 @@
-package Application.View;
+package view;
 
-import Application.Constants;
-import Application.GameBoardController;
-import Application.Model.MonteCarloTreeSearch.MCTSAlgorithm;
-import Application.Model.MonteCarloTreeSearch.MCTSTreeNode;
-import Application.Model.MonteCarloTreeSearch.UCT;
+import application.Constants;
+import application.GameBoardController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,6 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import model.montecarlotreesearch.MCTSAlgorithm;
+import model.montecarlotreesearch.MCTSTreeNode;
+import model.montecarlotreesearch.UCT;
 
 /**
  * This class displays a window providing MCTS details before the computer completes its turn.
@@ -43,7 +43,7 @@ public class MCTSInfoBox {
         actionLayout.setAlignment(Pos.CENTER_LEFT);
 
         // List the constants used in the MCTS algorithm.
-        Label constants = new Label(String.format("Constants:\n" +
+        Label constants = new Label(String.format("application.Constants:\n" +
                         "User Win Reward: %.2f   Comp Win Reward: %.2f   " +
                         "Draw Reward: %.2f    UCT Exploration Constant %.2f",
                 Constants.USER_WIN, Constants.COMP_WIN, Constants.DRAW_SCORE, Constants.UCT_EXPLORATION_CONSTANT));

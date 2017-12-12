@@ -1,7 +1,7 @@
-package Application.Model.MonteCarloTreeSearch;
+package model.montecarlotreesearch;
 
-import Application.Constants;
-import Application.Model.GameState;
+import application.Constants;
+import model.environment.GameState;
 
 import java.util.*;
 

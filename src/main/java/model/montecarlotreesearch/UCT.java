@@ -1,6 +1,6 @@
-package Application.Model.MonteCarloTreeSearch;
+package model.montecarlotreesearch;
 
-import Application.Constants;
+import application.Constants;
 
 import java.util.Collections;
 import java.util.Comparator;

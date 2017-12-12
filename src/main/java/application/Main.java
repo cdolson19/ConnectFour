@@ -1,6 +1,6 @@
-package Application;
+package application;
 
-import Application.View.GameBoard;
+import view.GameBoard;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;

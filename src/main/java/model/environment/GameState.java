@@ -1,6 +1,6 @@
-package Application.Model;
+package model.environment;
 
-import Application.Constants;
+import application.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
