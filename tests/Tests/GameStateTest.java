@@ -31,7 +31,7 @@ public class GameStateTest {
      */
     @Test
     public void testGetAllPossibleNextStates1() {
-        GameState gameState = setUpGameState();
+        setUpGameState();
 
         // Fill column 3
         for (int row = Constants.NUM_ROWS - 1; row >= 0; row--) {
@@ -61,7 +61,7 @@ public class GameStateTest {
      */
     @Test
     public void testGetAllPossibleNextStates2() {
-        GameState gameState = setUpGameState();
+        gameState = setUpGameState();
 
         Assert.assertSame("getAllPossibleNextStates did not return the correct number of states",
                 7, gameState.getAllPossibleNextStates().size());
