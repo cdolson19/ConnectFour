@@ -26,11 +26,11 @@ public class GameStateTest {
     }
 
     /**
-     * Tests if GameState.getAllPossibleStates returns 5 possible next states for the next move when 2 of the 7 columns
+     * Tests if GameState.getAllPossibleNextStates returns 5 possible next states for the next move when 2 of the 7 columns
      * are filled.
      */
     @Test
-    public void testGetAllPossibleStates1() {
+    public void testGetAllPossibleNextStates1() {
         GameState gameState = setUpGameState();
 
         // Fill column 3
@@ -51,19 +51,19 @@ public class GameStateTest {
             }
         }
 
-        Assert.assertSame("getAllPossibleStates did not return the correct number of states",
-                5, gameState.getAllPossibleStates().size());
+        Assert.assertSame("getAllPossibleNextStates did not return the correct number of states",
+                5, gameState.getAllPossibleNextStates().size());
     }
 
     /**
-     * Tests if GameState.getAllPossibleStates returns 7 possible next states for the next move when 0 of the 7 columns
+     * Tests if GameState.getAllPossibleNextStates returns 7 possible next states for the next move when 0 of the 7 columns
      * are filled.
      */
     @Test
-    public void testGetAllPossibleStates2() {
+    public void testGetAllPossibleNextStates2() {
         GameState gameState = setUpGameState();
 
-        Assert.assertSame("getAllPossibleStates did not return the correct number of states",
-                7, gameState.getAllPossibleStates().size());
+        Assert.assertSame("getAllPossibleNextStates did not return the correct number of states",
+                7, gameState.getAllPossibleNextStates().size());
     }
 }

@@ -85,7 +85,7 @@ public class GameState {
      *
      * @return a list of game states containing all possible next moves.
      */
-    public List<GameState> getAllPossibleStates() {
+    public List<GameState> getAllPossibleNextStates() {
         List<GameState> successorStates = new ArrayList<>();
         List<Integer> possibleColumns = board.findPossibleActions();
         for (Integer column : possibleColumns) {

@@ -112,7 +112,7 @@ public class MCTSAlgorithm {
      * @param node the MCTSTreeNode to find all successors of.
      */
     public static void expandNode(MCTSTreeNode node) {
-        List<GameState> possibleStates = node.getGameState().getAllPossibleStates();
+        List<GameState> possibleStates = node.getGameState().getAllPossibleNextStates();
         possibleStates.forEach(state -> {
             MCTSTreeNode newNode = new MCTSTreeNode(state);
             newNode.setParentNode(node);
