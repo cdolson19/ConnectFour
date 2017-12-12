@@ -1,6 +1,6 @@
-package Application.Model;
+package model.environment;
 
-import Application.Constants;
+import application.Constants;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
-package Tests;
+package unitTests;
 
-import Application.Model.Board;
-import Application.Constants;
-import Application.Model.GameState;
+import application.Constants;
+import model.environment.Board;
+import model.environment.GameState;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,7 +50,6 @@ public class GameStateTest {
                 board.performMove(Constants.USER_MOVE, 2, row);
             }
         }
-
         Assert.assertSame("getAllPossibleNextStates did not return the correct number of states",
                 5, gameState.getAllPossibleNextStates().size());
     }

@@ -1,4 +1,4 @@
-package Application;
+package application;
 
 /**
  * This class contains constants used throughout the program.

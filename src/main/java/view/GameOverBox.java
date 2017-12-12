@@ -1,6 +1,6 @@
-package Application.View;
+package view;
 
-import Application.GameBoardController;
+import application.GameBoardController;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

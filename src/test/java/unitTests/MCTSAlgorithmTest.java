@@ -1,10 +1,10 @@
-package Tests;
+package unitTests;
 
-import Application.Model.Board;
-import Application.Constants;
-import Application.Model.GameState;
-import Application.Model.MonteCarloTreeSearch.MCTSAlgorithm;
-import Application.Model.MonteCarloTreeSearch.MCTSTreeNode;
+import application.Constants;
+import model.environment.Board;
+import model.environment.GameState;
+import model.montecarlotreesearch.MCTSAlgorithm;
+import model.montecarlotreesearch.MCTSTreeNode;
 import org.junit.Assert;
 import org.junit.Test;
 

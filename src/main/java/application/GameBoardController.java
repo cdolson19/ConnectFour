@@ -1,17 +1,17 @@
-package Application;
+package application;
 
-import Application.Model.Board;
-import Application.Model.Disc;
-import Application.Model.GameState;
-import Application.View.GameBoard;
-import Application.View.GameOverBox;
-import Application.View.MCTSInfoBox;
-import Application.Model.MonteCarloTreeSearch.MCTSAlgorithm;
-import Application.Model.MonteCarloTreeSearch.MCTSTreeNode;
+import model.environment.Board;
+import model.environment.Disc;
+import model.environment.GameState;
+import view.GameBoard;
+import view.GameOverBox;
+import view.MCTSInfoBox;
+import model.montecarlotreesearch.MCTSTreeNode;
+import model.montecarlotreesearch.MCTSAlgorithm;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
-import static Application.Constants.TILE_SIZE;
+import static application.Constants.TILE_SIZE;
 
 /**
  * This class is a controller for the javafx view of the connect 4 board.

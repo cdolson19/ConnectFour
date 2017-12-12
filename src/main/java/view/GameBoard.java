@@ -1,8 +1,8 @@
-package Application.View;
+package view;
 
-import Application.Constants;
-import Application.GameBoardController;
-import Application.Model.Disc;
+import application.Constants;
+import application.GameBoardController;
+import model.environment.Disc;
 import javafx.scene.Parent;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
@@ -15,9 +15,9 @@ import javafx.scene.shape.Shape;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Application.Constants.NUM_COLS;
-import static Application.Constants.NUM_ROWS;
-import static Application.Constants.TILE_SIZE;
+import static application.Constants.NUM_COLS;
+import static application.Constants.NUM_ROWS;
+import static application.Constants.TILE_SIZE;
 
 /**
  * This class represents the game board view for the connect 4 game.
@@ -96,7 +96,7 @@ public class GameBoard {
             rect.setOnMouseExited(event -> rect.setFill(Color.TRANSPARENT));
             // Attempt to place a disc into the column when the user clicks in the column
             final int column = x;
-            // rect.setOnMouseClicked(event -> GameBoardController.placeDisc(new Disc(userMove),column));
+            // rect.setOnMouseClicked(event -> application.GameBoardController.placeDisc(new Disc(userMove),column));
 
             rect.setOnMouseClicked(event -> GameBoardController.placeDisc(Constants.USER_MOVE, column));
             columns.add(rect);

@@ -1,9 +1,9 @@
-package Application.Model;
+package model.environment;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import static Application.Constants.TILE_SIZE;
+import static application.Constants.TILE_SIZE;
 
 /**
  * This class represents a token that can be placed into the board.

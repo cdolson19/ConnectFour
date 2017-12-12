@@ -1,8 +1,8 @@
-package Application.Model.MonteCarloTreeSearch;
+package model.montecarlotreesearch;
 
-import Application.Model.Board;
-import Application.Constants;
-import Application.Model.GameState;
+import model.environment.Board;
+import application.Constants;
+import model.environment.GameState;
 
 import java.util.List;
 
